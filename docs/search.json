@@ -1,26 +1,5 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "🎅🏼 Advent of Code 2023",
-    "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nDay 1: Trebuchet?!\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "day/01/index.html",
-    "href": "day/01/index.html",
-    "title": "Day 1: Trebuchet?!",
-    "section": "",
-    "text": "The newly-improved calibration document consists of lines of text; each line originally contained a specific calibration value that the Elves now need to recover. On each line, the calibration value can be found by combining the first digit and the last digit (in that order) to form a single two-digit number.\nFor example:\n1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet\nIn this example, the calibration values of these four lines are 12, 38, 15, and 77. Adding these together produces 142.\nConsider your entire calibration document. What is the sum of all of the calibration values?\n\nfrom typing import List\n\nexample = [\"1abc2\",\n    \"pqr3stu8vwx\",\n    \"a1b2c3d4e5f\",\n    \"treb7uchet\"]\n\ndef get_num(s:str) -&gt; int:\n    nums = [ch for ch in [*s] if ch.isdigit()]\n    return int(nums[0]+nums[-1])\n\ndef calibration_sum(inp:List[str]) -&gt; int:\n    nums = map(get_num, inp)\n    return sum(nums)\n\ncalibration_sum(example)\n\n142\n\n\n\nwith open(\"./input.txt\") as f:\n    inp = f.read().splitlines()\n\ncalibration_sum(inp)\n\n55488"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
-  },
-  {
     "objectID": "day/01/index.html#part-1",
     "href": "day/01/index.html#part-1",
     "title": "Day 1: Trebuchet?!",
@@ -40,5 +19,12 @@
     "title": "Day 1: Trebuchet?!",
     "section": "TIL",
     "text": "TIL\n\n[*string] converts a string into a list of elements\n\ns = \"1abc2\"\n[*s]\n\n['1', 'a', 'b', 'c', '2']"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "🎅🏼 Advent of Code 2023",
+    "section": "",
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nDay 1: Trebuchet?!\n\n\n\n\n\n\n\nNo matching items"
   }
 ]
