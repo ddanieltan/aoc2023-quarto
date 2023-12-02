@@ -1,19 +1,32 @@
 project:
   type: website
+  output-dir: docs
 
 website:
-  title: "."
+  title: "🎅🏼 Advent of Code 2023"
   navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+    right:
+      - icon: github
+        aria-label: github
+        href: https://github.com/ddanieltan/aoc2023-quarto
+  page-footer:
+    left: "🎄 Merry Christmas! 🎄 | Made by [@ddanieltan](https://www.ddanieltan.com/)"
 
 format:
   html:
-    theme: cosmo
+    theme: flatly
     css: styles.css
     toc: true
+    smooth-scroll: true
 
+# Code
+code-line-numbers: false
+code-overflow: wrap
+code-copy: true
+
+# Default author
+author:
+  - name: Daniel Tan
+    url: https://www.ddanieltan.com
 
 
