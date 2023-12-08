@@ -1,7 +1,7 @@
 ---
 title: "Day 3: Gear Ratios"
 ---
-
+## Part 1
 You and the Elf eventually reach a gondola lift station; he says the gondola lift will take you up to the water source, but this is as far as he can bring you. You go inside.
 
 It doesn't take long to find the gondolas, but there seems to be a problem: they're not moving.
@@ -34,7 +34,8 @@ Of course, the actual engine schematic is much larger. What is the sum of all of
 
 ```{python}
 import re
-from typing import List
+from typing import List, Tuple, Set
+from collections import namedtuple
 
 example = """467..114..
 ...*......
@@ -47,29 +48,71 @@ example = """467..114..
 ...$.*....
 .664.598.."""
 
+def check_line(before:str, current:str, after:str, SYMBOLS:Set[str]) -> int:
+    valid_nums = []
+    symbol_pos = {i for i,v in enumerate(before) if v in SYMBOLS}
+    symbol_pos |= {i for i,v in enumerate(current) if v in SYMBOLS}
+    symbol_pos |= {i for i,v in enumerate(after) if v in SYMBOLS}
+    
+    for r in re.finditer("[\d]+", current):
+        num_pos = set(range(r.span()[0] - 1, r.span()[1] + 1))
+        if symbol_pos & num_pos:
+            valid_nums.append(int(r.group(0)))
+    
+    return sum(valid_nums)
 
-def parse(inp:str) -> List[List[str]]:
-    grid = example.splitlines()
-    grid = [[*line] for line in grid]
+def part1(inp:str) -> int:
+    SYMBOLS = set(inp) - set('0123456789') - set('\n.')
+    lines = inp.splitlines()
+    lines.insert(0, "." * len(lines[0]))
+    lines.append("." * len(lines[0])) 
+    before = lines
+    current = lines[1:-1]
+    after = lines[2:]
 
-grid = example.splitlines()
-grid = [[*line] for line in grid]
+    valid_nums = [check_line(*step, SYMBOLS) for step in zip(before, current, after)]
 
-grid[0][2]
+    return sum(valid_nums)
 
-# numbers = re.findall(r"\d+", example)
-# numbers
+part1(example)
+```
 
-# for a,b in enumerate(example):
-#     print(a,b)
+```{python}
+with open("./input.txt") as f:
+    inp = f.read()
+part1(inp)
+```
+
+## Part 2
+
+## TIL
+
+### Using an expanded list and `zip` to extract moving window of current line, line before and line after
+
+```{python}
+data = example
+SYMBOLS = set(data) - set('0123456789') - set('\n.')
+SYMBOLS
+
+lines = example.splitlines()
+lines.insert(0, "." * len(lines[0]))
+lines.append("." * len(lines[0]))
+
+before = lines
+current = lines[1:-1]
+after = lines[2:]
+
+for step in zip(before, current, after):
+    print(*step)
 
 ```
 
+### `|=` performs in-place OR operation for LHS and RHS
+See [https://stackoverflow.com/questions/3929278/what-does-ior-do-in-python](https://stackoverflow.com/questions/3929278/what-does-ior-do-in-python) 
 
+### `re.finditer()` finds both matching pattern and span
 ```{python}
-
-bef = lines
-symbpos = {i for i, v in enumerate(bef)  if v in SYMB}
-symbpos
-
+for line in current:
+    for r in re.finditer("\d+", line):
+        print(r)
 ```
