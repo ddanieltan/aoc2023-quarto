@@ -1,6 +1,9 @@
 ---
 title: "Day 3: Gear Ratios"
 ---
+
+![](https://upload.wikimedia.org/wikipedia/commons/c/cd/AnimatedGears.gif)
+
 ## Part 1
 You and the Elf eventually reach a gondola lift station; he says the gondola lift will take you up to the water source, but this is as far as he can bring you. You go inside.
 
@@ -48,7 +51,7 @@ example = """467..114..
 ...$.*....
 .664.598.."""
 
-def check_line(before:str, current:str, after:str, SYMBOLS:Set[str]) -> int:
+def part_num(before:str, current:str, after:str, SYMBOLS:Set[str]) -> int:
     valid_nums = []
     symbol_pos = {i for i,v in enumerate(before) if v in SYMBOLS}
     symbol_pos |= {i for i,v in enumerate(current) if v in SYMBOLS}
@@ -70,7 +73,7 @@ def part1(inp:str) -> int:
     current = lines[1:-1]
     after = lines[2:]
 
-    valid_nums = [check_line(*step, SYMBOLS) for step in zip(before, current, after)]
+    valid_nums = [part_num(*step, SYMBOLS) for step in zip(before, current, after)]
 
     return sum(valid_nums)
 
@@ -113,6 +116,24 @@ In this schematic, there are two gears. The first is in the top left; it has par
 **What is the sum of all of the gear ratios in your engine schematic?**
 
 ```{python}
+def gear_ratio(before:str, current:str, after:str, SYMBOLS):
+    stars = {i for i, v in enumerate(current) if v == "*"}
+    numbers_pos = [(r.span()[0], r.span()[1], int(r.group(0))) for r in re.finditer("[\d]+", before)]
+    numbers_pos.extend([(r.span()[0], r.span()[1], int(r.group(0))) for r in re.finditer("[\d]+", current)])
+    numbers_pos.extend([(r.span()[0], r.span()[1], int(r.group(0))) for r in re.finditer("[\d]+", after)])
+
+    gears = []
+    for s in stars:
+        numbers = []
+        for npos in numbers_pos:
+            if npos[0] - 1 <= s <= npos[1]:
+                numbers.append(npos[2])
+            if len(numbers) == 2:
+                gears.append(numbers[0] * numbers[1])
+
+    return gears
+
+
 def part2(inp:str) -> int:
     SYMBOLS = set(inp) - set('0123456789') - set('\n.')
     lines = inp.splitlines()
@@ -122,9 +143,15 @@ def part2(inp:str) -> int:
     current = lines[1:-1]
     after = lines[2:]
 
-    for 
+    valid_nums = [gear_ratio(*step, SYMBOLS) for step in zip(before, current, after)]
+    valid_nums = set(sum(valid_nums, []))
+    return sum(valid_nums)
 
 part2(example)
+```
+
+```{python}
+part2(inp)
 ```
 
 ## TIL
@@ -159,5 +186,13 @@ for line in current:
         print(r)
 ```
 
+### `sum(list_of_lists, [])` can flatten list of lists into 1 list
+```{python}
+list_of_lists = [[], [16345, 16345], [], [], [], [], [], [], [451490], []]
+
+sum(list_of_lists, [])
+```
+
 ## Reference
-Solution adapted from [topaz](https://topaz.github.io/paste/#XQAAAQDvBQAAAAAAAAARiAD4PP1ploVEl+OFD4vLWp4QYBCHZNTynpdCknaPAxrp2RZDspw0lk5HEllF6MZo7vElFyXviAPVTrCVJCIOyhJCSiYjuDlJ2dHjJMQtL398Ms7L1JPNyUzTAyNgP6/r7zcCRr3t4cXFK0hbVVDysaNl8kyia1nbxNi5MuIoOBOaAEuQinPGU/Oh0FKy3tU9C9EP//ucpznGvN9/17doOXKQ3106LPbql62rdbCWwYx5YOjuqJJEa4Oa5waVJNqVKpk9g3dPzS3Q1c78kpDRa+ajn9QP3zx4IR68KmscGknS44qKuD59HJhiAtRAKhP1Ta6eyu/MfGfAcfktVZQ7tx2OLOHvsCEwK0ATtigErDpAAEYlMQ9C1l1D547LDJLKcFWP7whxmctk+zJYarpCB3Qk9uThNjhPXIKP1+ACzDxLchAGfTFFALpGlewWukSDkHncAdxE2SMbkn5obRktVsP1UehlIkDvv7Tkp+FRbgtltVEb4joTAJJJ+ZiVOPr0YEzDNsvxFof/ZrTkOWdtGfR4j1XeFvOuaCiHjCUE4MLgzxyWM9+JLzLT8PvbrI8XQx58T/QFm34kl4RwOfzuwClW0Nz8ULTh1SDgwbsjw6np6AEgoEqIuI3sAZVinbrZFg6Wty/U2Tb+mVrgeswigmjHzeb5kMmsIT4Vv+o27UQQn8HLU7qQAs+RPiFEeAof7YIZGL8ntWKe8iaZ7c3mvte3X29nyLt/JoW7JkP8udcXIv0RXBLwUeEMXpnxjcnD1BS8eZnQ0f2SS0c=)
+- Solution adapted from [topaz](https://topaz.github.io/paste/#XQAAAQDvBQAAAAAAAAARiAD4PP1ploVEl+OFD4vLWp4QYBCHZNTynpdCknaPAxrp2RZDspw0lk5HEllF6MZo7vElFyXviAPVTrCVJCIOyhJCSiYjuDlJ2dHjJMQtL398Ms7L1JPNyUzTAyNgP6/r7zcCRr3t4cXFK0hbVVDysaNl8kyia1nbxNi5MuIoOBOaAEuQinPGU/Oh0FKy3tU9C9EP//ucpznGvN9/17doOXKQ3106LPbql62rdbCWwYx5YOjuqJJEa4Oa5waVJNqVKpk9g3dPzS3Q1c78kpDRa+ajn9QP3zx4IR68KmscGknS44qKuD59HJhiAtRAKhP1Ta6eyu/MfGfAcfktVZQ7tx2OLOHvsCEwK0ATtigErDpAAEYlMQ9C1l1D547LDJLKcFWP7whxmctk+zJYarpCB3Qk9uThNjhPXIKP1+ACzDxLchAGfTFFALpGlewWukSDkHncAdxE2SMbkn5obRktVsP1UehlIkDvv7Tkp+FRbgtltVEb4joTAJJJ+ZiVOPr0YEzDNsvxFof/ZrTkOWdtGfR4j1XeFvOuaCiHjCUE4MLgzxyWM9+JLzLT8PvbrI8XQx58T/QFm34kl4RwOfzuwClW0Nz8ULTh1SDgwbsjw6np6AEgoEqIuI3sAZVinbrZFg6Wty/U2Tb+mVrgeswigmjHzeb5kMmsIT4Vv+o27UQQn8HLU7qQAs+RPiFEeAof7YIZGL8ntWKe8iaZ7c3mvte3X29nyLt/JoW7JkP8udcXIv0RXBLwUeEMXpnxjcnD1BS8eZnQ0f2SS0c=)
+- [Beautiful visualisation with Altair by Jung Hoon Son](https://data-expressions.com/data-poetry/aoc_day3.html)
