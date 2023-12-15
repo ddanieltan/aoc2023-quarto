@@ -25,7 +25,7 @@
     "href": "index.html",
     "title": "🎅🏼 Advent of Code 2023",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nDay 1: Trebuchet?!\n\n\n\n\n\n\n\n\n\n\n\nDay 2: Cube Conundrum\n\n\n\n\n\n\n\n\n\n\n\nDay 3: Gear Ratios\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nDay 1: Trebuchet?!\n\n\n\n\n\n\n\n\n\n\n\nDay 2: Cube Conundrum\n\n\n\n\n\n\n\n\n\n\n\nDay 3: Gear Ratios\n\n\n\n\n\n\n\n\n\n\n\nDay 4: Scratchcards\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "day/02/index.html",
@@ -89,5 +89,26 @@
     "title": "Day 3: Gear Ratios",
     "section": "Reference",
     "text": "Reference\n\nSolution adapted from topaz\nBeautiful visualisation with Altair by Jung Hoon Son"
+  },
+  {
+    "objectID": "day/04/index.html#part-1",
+    "href": "day/04/index.html#part-1",
+    "title": "Day 4: Scratchcards",
+    "section": "Part 1",
+    "text": "Part 1\nFor example:\nCard 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\nCard 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\nCard 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\nCard 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\nCard 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\nCard 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11\nIn the above example, card 1 has five winning numbers (41, 48, 83, 86, and 17) and eight numbers you have (83, 86, 6, 31, 17, 9, 48, and 53). Of the numbers you have, four of them (48, 83, 17, and 86) are winning numbers! That means card 1 is worth 8 points (1 for the first match, then doubled three times for each of the three matches after the first).\nCard 2 has two winning numbers (32 and 61), so it is worth 2 points. Card 3 has two winning numbers (1 and 21), so it is worth 2 points. Card 4 has one winning number (84), so it is worth 1 point. Card 5 has no winning numbers, so it is worth no points. Card 6 has no winning numbers, so it is worth no points. So, in this example, the Elf’s pile of scratchcards is worth 13 points.\nTake a seat in the large pile of colorful cards. How many points are they worth in total?\n\nimport re\nfrom typing import List\n\nexample = \"\"\"Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\nCard 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\nCard 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\nCard 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\nCard 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\nCard 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11\"\"\"\n\ndef count_wins(inp:str) -&gt; List[int]:\n    pattern = r\"Card.+: (.+) \\| (.+)\"\n    wins = []\n    for line in inp.splitlines():\n        r = re.search(pattern, line)\n        winners = set(int(n) for n in r.group(1).split())\n        card = set(int(n) for n in r.group(2).split())\n        wins.append(len(winners.intersection(card)))\n    return wins\n\ndef part1(inp:str) -&gt; int:\n    wins = count_wins(inp)\n    score = [2 ** (w-1) for w in wins if w &gt; 0]\n    return sum(score)\n\npart1(example)\n\n13\n\n\n\nwith open(\"./input.txt\") as f:\n    inp = f.read()\npart1(inp)\n\n25174"
+  },
+  {
+    "objectID": "day/04/index.html#part-2",
+    "href": "day/04/index.html#part-2",
+    "title": "Day 4: Scratchcards",
+    "section": "Part 2",
+    "text": "Part 2\nThis time, the above example goes differently:\nCard 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\nCard 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\nCard 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\nCard 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\nCard 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\nCard 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11\nCard 1 has four matching numbers, so you win one copy each of the next four cards: cards 2, 3, 4, and 5. Your original card 2 has two matching numbers, so you win one copy each of cards 3 and 4. Your copy of card 2 also wins one copy each of cards 3 and 4. Your four instances of card 3 (one original and three copies) have two matching numbers, so you win four copies each of cards 4 and 5. Your eight instances of card 4 (one original and seven copies) have one matching number, so you win eight copies of card 5. Your fourteen instances of card 5 (one original and thirteen copies) have no matching numbers and win no more cards. Your one instance of card 6 (one original) has no matching numbers and wins no more cards. Once all of the originals and copies have been processed, you end up with 1 instance of card 1, 2 instances of card 2, 4 instances of card 3, 8 instances of card 4, 14 instances of card 5, and 1 instance of card 6. In total, this example pile of scratchcards causes you to ultimately have 30 scratchcards!\nProcess all of the original and copied scratchcards until no more scratchcards are won. Including the original set of scratchcards, how many total scratchcards do you end up with?\n\ndef part2(inp:str) -&gt; int:\n    wins = count_wins(inp)\n    score = [2 ** (w-1) if w&gt;0 else 0 for w in wins]\n\n    # DP comes in useful\n    # We start with 1 copy of each card\n    copies = [1] * len(wins)\n    for i, w in enumerate((wins)):\n        current = copies[i]\n        for j in range(1,w+1):\n            copies[i+j] += current\n\n    return sum(copies)\n\n\npart2(example)\n\n30\n\n\n\npart2(inp)\n\n6420979"
+  },
+  {
+    "objectID": "day/04/index.html#til",
+    "href": "day/04/index.html#til",
+    "title": "Day 4: Scratchcards",
+    "section": "TIL",
+    "text": "TIL\n\nDefault shortcut to insert code cell when using vscode-quarto is shift+cmd+i\n\n\nThis pattern of Combinatorics/Recursive type problem can be solved by Dynamic Programming\nTo design a DP solution, it helps to write everything out by hand so we can get a sense of what intermediate values need to be tracked (memoized).\nMy notes that helped me figure out the solution\nWins 4 2 2 1 0 0\nv&gt;0  1 1 1 1 1 1\n     1 2 2 2 2 1\n     1 2 4 4 2 1\n     1 2 4 8 6 1 \n     1 2 4 8 14 1\n     1 2 4 8 14 1\n              \nCard 1 2 3 4 5 6\n       2 3 4 5\n         3 4\n         3 4\n           4 5\n           4 5\n           4 5\n           4 5\n             5\n             5\n             5\n             5\n             5\n             5\n             5\n             5"
   }
 ]
