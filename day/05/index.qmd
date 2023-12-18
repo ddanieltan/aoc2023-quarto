@@ -1,6 +1,8 @@
 ---
-title: "Day 5: "
+title: "Day 5: If You Give A Seed A Fertilizer"
 ---
+
+![](https://upload.wikimedia.org/wikipedia/commons/8/87/Students_planting_seeds.jpg)
 
 ## Part 1
 For example:
@@ -263,7 +265,7 @@ convert2(parse_seeds2(example), [Mapping(dest=50, source=98, length=2), Mapping(
 
 ## TIL
 
-
+```
 def convert2(seeds:List[range], mappings:List[Mapping])-> List[range]:
 #     for m in mappings:
 #         converted_seeds = []
@@ -321,7 +323,7 @@ def convert2(seeds:List[range], mappings:List[Mapping])-> List[range]:
 #                     seeds.append(range(max(overlap_set)+1, mapping_range.stop))
             
 #     return converted_seeds
-
+```
 
 ### `([\S\s]*?)` matches all characters including `\n` between to strings
 ```{python}
