@@ -1,0 +1,255 @@
+---
+title: "Day 5: "
+---
+
+## Part 1
+For example:
+```
+seeds: 79 14 55 13
+
+seed-to-soil map:
+50 98 2
+52 50 48
+
+soil-to-fertilizer map:
+0 15 37
+37 52 2
+39 0 15
+
+fertilizer-to-water map:
+49 53 8
+0 11 42
+42 0 7
+57 7 4
+
+water-to-light map:
+88 18 7
+18 25 70
+
+light-to-temperature map:
+45 77 23
+81 45 19
+68 64 13
+
+temperature-to-humidity map:
+0 69 1
+1 0 69
+
+humidity-to-location map:
+60 56 37
+56 93 4
+```
+The almanac starts by listing which seeds need to be planted: seeds 79, 14, 55, and 13.
+
+The rest of the almanac contains a list of maps which describe how to convert numbers from a source category into numbers in a destination category. That is, the section that starts with seed-to-soil map: describes how to convert a seed number (the source) to a soil number (the destination). This lets the gardener and his team know which soil to use with which seeds, which water to use with which fertilizer, and so on.
+
+Rather than list every source number and its corresponding destination number one by one, the maps describe entire ranges of numbers that can be converted. Each line within a map contains three numbers: the destination range start, the source range start, and the range length.
+
+Consider again the example seed-to-soil map:
+```
+50 98 2
+52 50 48
+```
+The first line has a destination range start of 50, a source range start of 98, and a range length of 2. This line means that the source range starts at 98 and contains two values: 98 and 99. The destination range is the same length, but it starts at 50, so its two values are 50 and 51. With this information, you know that seed number 98 corresponds to soil number 50 and that seed number 99 corresponds to soil number 51.
+
+The second line means that the source range starts at 50 and contains 48 values: 50, 51, ..., 96, 97. This corresponds to a destination range starting at 52 and also containing 48 values: 52, 53, ..., 98, 99. So, seed number 53 corresponds to soil number 55.
+
+Any source numbers that aren't mapped correspond to the same destination number. So, seed number 10 corresponds to soil number 10.
+
+So, the entire list of seed numbers and their corresponding soil numbers looks like this:
+```
+seed  soil
+0     0
+1     1
+...   ...
+48    48
+49    49
+50    52
+51    53
+...   ...
+96    98
+97    99
+98    50
+99    51
+```
+With this map, you can look up the soil number required for each initial seed number:
+
+Seed number 79 corresponds to soil number 81.
+Seed number 14 corresponds to soil number 14.
+Seed number 55 corresponds to soil number 57.
+Seed number 13 corresponds to soil number 13.
+The gardener and his team want to get started as soon as possible, so they'd like to know the closest location that needs a seed. Using these maps, find the lowest location number that corresponds to any of the initial seeds. To do this, you'll need to convert each seed number through other categories until you can find its corresponding location number. In this example, the corresponding types are:
+```
+Seed 79, soil 81, fertilizer 81, water 81, light 74, temperature 78, humidity 78, location 82.
+Seed 14, soil 14, fertilizer 53, water 49, light 42, temperature 42, humidity 43, location 43.
+Seed 55, soil 57, fertilizer 57, water 53, light 46, temperature 82, humidity 82, location 86.
+Seed 13, soil 13, fertilizer 52, water 41, light 34, temperature 34, humidity 35, location 35.
+```
+So, the lowest location number in this example is 35.
+
+**What is the lowest location number that corresponds to any of the initial seed numbers?**
+
+
+```{python}
+example = """seeds: 79 14 55 13
+
+seed-to-soil map:
+50 98 2
+52 50 48
+
+soil-to-fertilizer map:
+0 15 37
+37 52 2
+39 0 15
+
+fertilizer-to-water map:
+49 53 8
+0 11 42
+42 0 7
+57 7 4
+
+water-to-light map:
+88 18 7
+18 25 70
+
+light-to-temperature map:
+45 77 23
+81 45 19
+68 64 13
+
+temperature-to-humidity map:
+0 69 1
+1 0 69
+
+humidity-to-location map:
+60 56 37
+56 93 4"""
+```
+```{python}
+import re
+from typing import List, Dict
+from collections import namedtuple
+
+Mapping = namedtuple("Mapping", "dest source length")
+
+def parse_seeds(inp:str) -> List[int]:
+    pattern = r"seeds: (.+)\n"
+    r = re.search(pattern, inp)
+    return [int(num) for num in r.group(1).split()]
+
+def parse_mapping(inp:str, pattern:str) -> List[Mapping]:
+    r = re.search(pattern,inp)
+    mappings = []
+    for m in r.group(1).splitlines():
+        nums = [int(n) for n in m.split()]
+        if len(nums) == 3:
+            mappings.append(Mapping(nums[0],nums[1], nums[2]))
+    return mappings
+
+def convert(num:int, mappings:List[Mapping]) -> int:
+    for m in mappings:
+        if num in range(m.source, m.source+m.length):
+            return (m.dest + num - m.source)
+    return num
+
+def part1(inp:str) -> int:
+    seeds = parse_seeds(inp)
+    seed_to_soil = parse_mapping(inp, pattern=r"seed-to-soil map:\n([\S\s]*?)soil")
+    soil_to_fertilizer = parse_mapping(inp, pattern=r"soil-to-fertilizer map:\n([\S\s]*?)fertilizer")
+    fertilizer_to_water = parse_mapping(inp, pattern=r"fertilizer-to-water map:\n([\S\s]*?)water")
+    water_to_light = parse_mapping(inp, pattern=r"water-to-light map:\n([\S\s]*?)light")
+    light_to_temp = parse_mapping(inp, pattern=r"light-to-temperature map:\n([\S\s]*?)temperature")
+    temp_to_humidity = parse_mapping(inp, pattern=r"temperature-to-humidity map:\n([\S\s]*?)humidity")
+    humidity_to_location = parse_mapping(inp, pattern=r"humidity-to-location map:\n([\S\s]*?)")
+
+    soil = [convert(x, seed_to_soil) for x in seeds]
+    fertilizer = [convert(x, soil_to_fertilizer) for x in soil]
+    water = [convert(x, fertilizer_to_water) for x in fertilizer]
+    light = [convert(x, water_to_light) for x in water]
+    temp = [convert(x, light_to_temp) for x in light]
+    humidity = [convert(x, temp_to_humidity) for x in temp]
+    location = [convert(x, humidity_to_location) for x in humidity]
+
+    return min(location)
+
+part1(example)
+
+```
+
+```{python}
+with open("./input.txt") as f:
+    inp = f.read()
+part1(inp)
+```
+
+## Part 2
+Everyone will starve if you only plant such a small number of seeds. Re-reading the almanac, it looks like the seeds: line actually describes ranges of seed numbers.
+
+The values on the initial seeds: line come in pairs. Within each pair, the first value is the start of the range and the second value is the length of the range. So, in the first line of the example above:
+
+seeds: 79 14 55 13
+This line describes two ranges of seed numbers to be planted in the garden. The first range starts with seed number 79 and contains 14 values: 79, 80, ..., 91, 92. The second range starts with seed number 55 and contains 13 values: 55, 56, ..., 66, 67.
+
+Now, rather than considering four seed numbers, you need to consider a total of 27 seed numbers.
+
+In the above example, the lowest location number can be obtained from seed number 82, which corresponds to soil 84, fertilizer 84, water 84, light 77, temperature 45, humidity 46, and location 46. So, the lowest location number is 46.
+
+Consider all of the initial seed numbers listed in the ranges on the first line of the almanac. **What is the lowest location number that corresponds to any of the initial seed numbers?**
+
+```{python}
+SeedRange = namedtuple("SeedRange","start length")
+
+def parse_seeds2(inp:str) -> List[SeedRange]:
+    pattern = r"seeds: (.+)\n"
+    r = re.search(pattern, inp)
+    seeds = [int(num) for num in r.group(1).split()]
+    ret = []
+    for i in range(0,len(seeds),2):
+        ret.append(SeedRange(seeds[i],seeds[i+1]))
+    return ret
+
+
+
+```
+
+
+## TIL
+
+### `([\S\s]*?)` matches all characters including `\n` between to strings
+```{python}
+s = """seed-to-soil map:
+50 98 2
+52 50 48
+
+soil-to-fertilizer map:"""
+
+pattern = r"seed-to-soil map:\n([\S\s]*?)soil"
+r = re.findall(pattern,s)
+print(r)
+```
+- ( and ): These parentheses are used to create a capturing group, which allows you to extract the matched portion of the text.
+
+- [\S\s]: This character class matches any non-whitespace character (\S) or any whitespace character (\s). Essentially, it matches any character, including whitespace.
+
+- *?: The asterisk (*) is a quantifier that matches zero or more occurrences of the preceding element. The question mark (?) makes the quantifier lazy, meaning it will match as few characters as possible while still allowing the overall match to succeed.
+
+### `namedtuple` provides a convenient way to build a tiny dataclass
+```{python}
+from collections import namedtuple
+
+# Create a namedtuple type, Point. Namedtuples are immutable.
+Point = namedtuple("Point", "x y")
+
+# Instantiate the new type
+point = Point(2, 4)
+point
+Point(x=2, y=4)
+
+# Access params using dot notation
+print(f"{point.x = }")
+print(f"{point.y = }")
+
+# Or using index
+print(f"{point[0] = }")
+print(f"{point[1] = }")
+```
