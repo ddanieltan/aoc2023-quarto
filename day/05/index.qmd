@@ -129,7 +129,7 @@ humidity-to-location map:
 ```
 ```{python}
 import re
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from collections import namedtuple
 
 Mapping = namedtuple("Mapping", "dest source length")
@@ -200,7 +200,7 @@ Consider all of the initial seed numbers listed in the ranges on the first line 
 
 ```{python}
 
-def parse_seeds2(inp:str) -> List[range]:
+def parse_seeds2(inp:str) -> List[Tuple[int,int]]:
     pattern = r"seeds: (.+)\n"
     r = re.search(pattern, inp)
     seeds = [int(num) for num in r.group(1).split()]
@@ -211,76 +211,87 @@ def parse_seeds2(inp:str) -> List[range]:
     return ret
 
 
-# def convert2(seeds:List[range], mappings:List[Mapping]) -> List[range]:
-#     converted_seeds = []
-#     while len(seeds) > 0:
-#         current_seed = seeds.pop()
+def convert2(seeds:List[range], mappings:List[Mapping]) -> List[Tuple[int,int]]:
+    converted_seeds = []
+    while len(seeds) > 0:
+        current_seed = seeds.pop()
+        print(f"{current_seed =}")
         
-#         for m in mappings:
-#             mapping_range = (m.source, m.source + m.length - 1)
+        for m in mappings:
+            mapping_range = (m.source, m.source + m.length - 1)
+            print(f"{mapping_range =}")
 
-#             # Seed is entirely out of mapping range
-#             if (current_seed[0] < mapping_range[0]) and (current_seed[1] < mapping_range[0]):
-#                 continue
+            # Seed is entirely out of mapping range
+            if (current_seed[0] > mapping_range[1]) or (current_seed[1] < mapping_range[0]):
+                continue
             
-#             # Seed is entirely in mapping range
-#             elif (current_seed[0] >= mapping_range[0]) and (current_seed[1] <= mapping_range[1]):
-#                 new_start = current_seed[0] + m.dest - m.source
-#                 new_stop = current_seed[1] + m.dest - m.source
-#                 converted_seeds.append((new_start, new_stop))
-#                 break
+            # Seed is entirely in mapping range
+            if (current_seed[0] >= mapping_range[0]) and (current_seed[1] <= mapping_range[1]):
+                new_start = current_seed[0] + m.dest - m.source
+                new_stop = current_seed[1] + m.dest - m.source
+                converted_seeds.append((new_start, new_stop))
+                print(f"{current_seed} in range")
+                break
             
-#             # Seed is partially in mapping range
-#             # 4 5 6 (4,6)
-#             # 5 6 7 (5,7)
-#             elif (current_seed[0] < mapping_range[0]) and (current_seed[1] < mapping_range[1]):
-#                overlap_start = mapping_range[0]
-#                overlap_end = current_seed[1]
-#                new_start = overlap_start + m.dest - m.source
-#                new_stop = overlap_end + m.dest - m.source
-#                converted_seeds.append((new_start, new_stop))
-#                seeds.append((current_seed[0],mapping_range[0]-1))
-#                seeds.append((current_seed[1]+1, mapping_range[1]))
-#                break
+            # Seed is partially in mapping range
+            # 4 5 6 (4,6)
+            # 5 6 7 (5,7)
+            elif (current_seed[0] < mapping_range[0]) and (current_seed[1] < mapping_range[1]):
+               overlap_start = mapping_range[0]
+               overlap_end = current_seed[1]
+               new_start = overlap_start + m.dest - m.source
+               new_stop = overlap_end + m.dest - m.source
+               converted_seeds.append((new_start, new_stop))
+               seeds.append((current_seed[0],mapping_range[0]-1))
+               seeds.append((current_seed[1]+1, mapping_range[1]))
+               print(f"{current_seed} partial1")
+               break
 
-#             elif (current_seed[0] > mapping_range[0]) and (current_seed[1] > mapping_range[1]):
-#                overlap_start = current_seed[0]
-#                overlap_end = mapping_range[1]
-#                new_start = overlap_start + m.dest - m.source
-#                new_stop = overlap_end + m.dest - m.source
-#                converted_seeds.append((new_start, new_stop))
-#                seeds.append((mapping_range[0],current_seed[0]-1))
-#                seeds.append((mapping_range[1]+1, current_seed[1]))
-#                break 
-               
+            elif (current_seed[0] > mapping_range[0]) and (current_seed[1] > mapping_range[1]):
+               overlap_start = current_seed[0]
+               overlap_end = mapping_range[1]
+               new_start = overlap_start + m.dest - m.source
+               new_stop = overlap_end + m.dest - m.source
+               converted_seeds.append((new_start, new_stop))
+               seeds.append((mapping_range[0],current_seed[0]-1))
+               seeds.append((mapping_range[1]+1, current_seed[1]))
+               print(f"{current_seed} partial2")
+               break          
 
-#         else:
-#             # We have gone through all mappings, keep seed unchange
-#             converted_seeds.append(current_seed)
-#     return converted_seeds
+        else:
+            # We have gone through all mappings, keep seed unchanged
+            converted_seeds.append(current_seed)
+            print(f"{current_seed} no match")
+    return converted_seeds
 
-# def part2(inp:str) -> int:
-#     seeds = parse_seeds2(inp)
-#     seed_to_soil = parse_mapping(inp, pattern=r"seed-to-soil map:\n([\S\s]*?)soil")
-#     soil_to_fertilizer = parse_mapping(inp, pattern=r"soil-to-fertilizer map:\n([\S\s]*?)fertilizer")
-#     print(soil_to_fertilizer)
-#     fertilizer_to_water = parse_mapping(inp, pattern=r"fertilizer-to-water map:\n([\S\s]*?)water")
-#     water_to_light = parse_mapping(inp, pattern=r"water-to-light map:\n([\S\s]*?)light")
-#     light_to_temp = parse_mapping(inp, pattern=r"light-to-temperature map:\n([\S\s]*?)temperature")
-#     temp_to_humidity = parse_mapping(inp, pattern=r"temperature-to-humidity map:\n([\S\s]*?)humidity")
-#     humidity_to_location = parse_mapping(inp, pattern=r"humidity-to-location map:\n([\S\s]*?)")
+def part2(inp:str) -> int:
+    seeds = parse_seeds2(inp)
+    seed_to_soil = parse_mapping(inp, pattern=r"seed-to-soil map:\n([\S\s]*?)soil")
+    soil_to_fertilizer = parse_mapping(inp, pattern=r"soil-to-fertilizer map:\n([\S\s]*?)fertilizer")
+    print(soil_to_fertilizer)
+    fertilizer_to_water = parse_mapping(inp, pattern=r"fertilizer-to-water map:\n([\S\s]*?)water")
+    water_to_light = parse_mapping(inp, pattern=r"water-to-light map:\n([\S\s]*?)light")
+    light_to_temp = parse_mapping(inp, pattern=r"light-to-temperature map:\n([\S\s]*?)temperature")
+    temp_to_humidity = parse_mapping(inp, pattern=r"temperature-to-humidity map:\n([\S\s]*?)humidity")
+    humidity_to_location = parse_mapping(inp, pattern=r"humidity-to-location map:\n([\S\s]*?)")
 
-#     soil = convert2(seeds, seed_to_soil)
-#     fertilizer = convert2(soil, soil_to_fertilizer)
-#     print(fertilizer)
-    # water = convert2(fertilizer, fertilizer_to_water)
-    # light = convert2(water, water_to_light)
-    # temp = convert2(light, light_to_temp)
-    # humidity = convert2(temp, temp_to_humidity)
-    # location = convert2(humidity, humidity_to_location)
+    soil = convert2(seeds, seed_to_soil)
+    fertilizer = convert2(soil, soil_to_fertilizer)
+    water = convert2(fertilizer, fertilizer_to_water)
+    light = convert2(water, water_to_light)
+    temp = convert2(light, light_to_temp)
+    humidity = convert2(temp, temp_to_humidity)
+    location = convert2(humidity, humidity_to_location)
 
-    # return min([start for start,stop in location])
+    print([start for start,stop in location])
 
+    return min([start for start,stop in location])
+
+part2(example)
+```
+
+```{python}
+part2(inp)
 ```
 
 4 5 6
