@@ -197,23 +197,131 @@ In the above example, the lowest location number can be obtained from seed numbe
 Consider all of the initial seed numbers listed in the ranges on the first line of the almanac. **What is the lowest location number that corresponds to any of the initial seed numbers?**
 
 ```{python}
-SeedRange = namedtuple("SeedRange","start length")
 
-def parse_seeds2(inp:str) -> List[SeedRange]:
+def parse_seeds2(inp:str) -> List[range]:
     pattern = r"seeds: (.+)\n"
     r = re.search(pattern, inp)
     seeds = [int(num) for num in r.group(1).split()]
     ret = []
     for i in range(0,len(seeds),2):
-        ret.append(SeedRange(seeds[i],seeds[i+1]))
+        ret.append(range(seeds[i],seeds[i]+seeds[i+1]))
     return ret
 
 
+def convert2(seeds:List[range], mappings:List[Mapping]) -> List[range]:
+    for m in mappings:
+        converted_seeds = []
+        while len(seeds) > 0:
+            current_seed = seeds.pop()
+            overlap_start = max(current_seed.start, m.source)
+            overlap_end = min(current_seed.stop, m.source + m.length)
 
+            if overlap_start < overlap_end:
+                converted_seeds.append(range(
+                    overlap_start + m.dest - m.source,
+                    overlap_end + m.dest - m.source)
+                )
+
+                if current_seed.start < overlap_start:
+                    seeds.append(range(current_seed.start,overlap_start))
+                
+                if overlap_end < current_seed.stop:
+                    seeds.append(range(overlap_end, current_seed.stop))
+                
+                break
+            else:
+                converted_seeds.append(current_seed)
+        seeds = converted_seeds
+    return converted_seeds
+
+def part2(inp:str):
+    seeds = parse_seeds2(inp)
+    seed_to_soil = parse_mapping(inp, pattern=r"seed-to-soil map:\n([\S\s]*?)soil")
+    soil_to_fertilizer = parse_mapping(inp, pattern=r"soil-to-fertilizer map:\n([\S\s]*?)fertilizer")
+    fertilizer_to_water = parse_mapping(inp, pattern=r"fertilizer-to-water map:\n([\S\s]*?)water")
+    water_to_light = parse_mapping(inp, pattern=r"water-to-light map:\n([\S\s]*?)light")
+    light_to_temp = parse_mapping(inp, pattern=r"light-to-temperature map:\n([\S\s]*?)temperature")
+    temp_to_humidity = parse_mapping(inp, pattern=r"temperature-to-humidity map:\n([\S\s]*?)humidity")
+    humidity_to_location = parse_mapping(inp, pattern=r"humidity-to-location map:\n([\S\s]*?)")
+
+    soil = [convert(x, seed_to_soil) for x in seeds]
+    fertilizer = [convert(x, soil_to_fertilizer) for x in soil]
+    water = [convert(x, fertilizer_to_water) for x in fertilizer]
+    light = [convert(x, water_to_light) for x in water]
+    temp = [convert(x, light_to_temp) for x in light]
+    humidity = [convert(x, temp_to_humidity) for x in temp]
+    location = [convert(x, humidity_to_location) for x in humidity]
+
+
+parse_seeds2(example)
+convert2(parse_seeds2(example), [Mapping(dest=50, source=98, length=2), Mapping(dest=52, source=50, length=48)])
 ```
+
+4 5 6
+4 5 6 7 8
 
 
 ## TIL
+
+
+def convert2(seeds:List[range], mappings:List[Mapping])-> List[range]:
+#     for m in mappings:
+#         converted_seeds = []
+#         while len(seeds) > 0:
+#             current_seed = seeds.pop()
+#             mapping_range = range(m.source, m.source + m.length)
+
+#             # 4,5 -- 4,5,6,7,8
+#             # seed.start = 4, seed.stop=6
+#             # map.start =4, map.stop=9
+#             if current_seed.start == mapping_range.start:
+#                 converted_seeds.append(range(current_seed.start+m.dest-m.source, current_seed.stop+m.dest-m.source))
+#                 seeds.append()
+
+    
+#     converted_seeds = []
+    
+#     while len(seeds)>0:
+#         current_seed = seeds.pop()
+#         print(current_seed)
+
+#         for m in mappings:
+#             mapping_range = range(m.source, m.source+m.length)
+#             print(mapping_range)
+#             overlap_set = set(current_seed).intersection(mapping_range)
+            
+#             # Seed range is entirely within mapping range
+#             if len(overlap_set)==(current_seed.stop - current_seed.start):
+#                 new_start = current_seed.start + m.dest - m.source
+#                 new_stop = current_seed.stop + m.dest - m.source
+#                 converted_seeds.append(range(new_start, new_stop))
+            
+#             # No overlap
+#             elif len(overlap_set)==0:
+#                 print(overlap_set)
+#                 converted_seeds.append(current_seed)
+
+#             # Partial overlap
+#             elif len(overlap_set) < (current_seed.stop - current_seed.start):
+#                 if min(overlap_set) == mapping_range.start:
+#                     new_start = min(overlap_set) + m.dest - m.source
+#                     new_stop = max(overlap_set) + m.dest - m.source
+#                     converted_seeds.append(range(new_start, new_stop))
+#                     seeds.append(range(max(overlap_set)+1, mapping_range.stop))
+#                 if max(overlap_set) == mapping_range.stop:
+#                     new_start = min(overlap_set) + m.dest - m.source
+#                     new_stop = max(overlap_set) + m.dest - m.source
+#                     converted_seeds.append(range(new_start, new_stop))
+#                     seeds.append(range(mapping_range.start, min(overlap_set)))
+#                 else:
+#                     new_start = min(overlap_set) + m.dest - m.source
+#                     new_stop = max(overlap_set) + m.dest - m.source
+#                     converted_seeds.append(range(new_start, new_stop))
+#                     seeds.append(range(mapping_range.start, min(overlap_set)))
+#                     seeds.append(range(max(overlap_set)+1, mapping_range.stop))
+            
+#     return converted_seeds
+
 
 ### `([\S\s]*?)` matches all characters including `\n` between to strings
 ```{python}
@@ -252,4 +360,12 @@ print(f"{point.y = }")
 # Or using index
 print(f"{point[0] = }")
 print(f"{point[1] = }")
+```
+
+### Finding intersection between ranges using set.intersection
+
+```{python}
+a = range(3,6)
+b = range(4,9)
+set(a).intersection(b)
 ```
