@@ -206,57 +206,81 @@ def parse_seeds2(inp:str) -> List[range]:
     seeds = [int(num) for num in r.group(1).split()]
     ret = []
     for i in range(0,len(seeds),2):
-        ret.append(range(seeds[i],seeds[i]+seeds[i+1]))
+        # Create a tuple to represent range with start and end inclusive
+        ret.append((seeds[i],seeds[i]+seeds[i+1]-1))
     return ret
 
 
-def convert2(seeds:List[range], mappings:List[Mapping]) -> List[range]:
-    for m in mappings:
-        converted_seeds = []
-        while len(seeds) > 0:
-            current_seed = seeds.pop()
-            overlap_start = max(current_seed.start, m.source)
-            overlap_end = min(current_seed.stop, m.source + m.length)
+# def convert2(seeds:List[range], mappings:List[Mapping]) -> List[range]:
+#     converted_seeds = []
+#     while len(seeds) > 0:
+#         current_seed = seeds.pop()
+        
+#         for m in mappings:
+#             mapping_range = (m.source, m.source + m.length - 1)
 
-            if overlap_start < overlap_end:
-                converted_seeds.append(range(
-                    overlap_start + m.dest - m.source,
-                    overlap_end + m.dest - m.source)
-                )
+#             # Seed is entirely out of mapping range
+#             if (current_seed[0] < mapping_range[0]) and (current_seed[1] < mapping_range[0]):
+#                 continue
+            
+#             # Seed is entirely in mapping range
+#             elif (current_seed[0] >= mapping_range[0]) and (current_seed[1] <= mapping_range[1]):
+#                 new_start = current_seed[0] + m.dest - m.source
+#                 new_stop = current_seed[1] + m.dest - m.source
+#                 converted_seeds.append((new_start, new_stop))
+#                 break
+            
+#             # Seed is partially in mapping range
+#             # 4 5 6 (4,6)
+#             # 5 6 7 (5,7)
+#             elif (current_seed[0] < mapping_range[0]) and (current_seed[1] < mapping_range[1]):
+#                overlap_start = mapping_range[0]
+#                overlap_end = current_seed[1]
+#                new_start = overlap_start + m.dest - m.source
+#                new_stop = overlap_end + m.dest - m.source
+#                converted_seeds.append((new_start, new_stop))
+#                seeds.append((current_seed[0],mapping_range[0]-1))
+#                seeds.append((current_seed[1]+1, mapping_range[1]))
+#                break
 
-                if current_seed.start < overlap_start:
-                    seeds.append(range(current_seed.start,overlap_start))
-                
-                if overlap_end < current_seed.stop:
-                    seeds.append(range(overlap_end, current_seed.stop))
-                
-                break
-            else:
-                converted_seeds.append(current_seed)
-        seeds = converted_seeds
-    return converted_seeds
+#             elif (current_seed[0] > mapping_range[0]) and (current_seed[1] > mapping_range[1]):
+#                overlap_start = current_seed[0]
+#                overlap_end = mapping_range[1]
+#                new_start = overlap_start + m.dest - m.source
+#                new_stop = overlap_end + m.dest - m.source
+#                converted_seeds.append((new_start, new_stop))
+#                seeds.append((mapping_range[0],current_seed[0]-1))
+#                seeds.append((mapping_range[1]+1, current_seed[1]))
+#                break 
+               
 
-def part2(inp:str):
-    seeds = parse_seeds2(inp)
-    seed_to_soil = parse_mapping(inp, pattern=r"seed-to-soil map:\n([\S\s]*?)soil")
-    soil_to_fertilizer = parse_mapping(inp, pattern=r"soil-to-fertilizer map:\n([\S\s]*?)fertilizer")
-    fertilizer_to_water = parse_mapping(inp, pattern=r"fertilizer-to-water map:\n([\S\s]*?)water")
-    water_to_light = parse_mapping(inp, pattern=r"water-to-light map:\n([\S\s]*?)light")
-    light_to_temp = parse_mapping(inp, pattern=r"light-to-temperature map:\n([\S\s]*?)temperature")
-    temp_to_humidity = parse_mapping(inp, pattern=r"temperature-to-humidity map:\n([\S\s]*?)humidity")
-    humidity_to_location = parse_mapping(inp, pattern=r"humidity-to-location map:\n([\S\s]*?)")
+#         else:
+#             # We have gone through all mappings, keep seed unchange
+#             converted_seeds.append(current_seed)
+#     return converted_seeds
 
-    soil = [convert(x, seed_to_soil) for x in seeds]
-    fertilizer = [convert(x, soil_to_fertilizer) for x in soil]
-    water = [convert(x, fertilizer_to_water) for x in fertilizer]
-    light = [convert(x, water_to_light) for x in water]
-    temp = [convert(x, light_to_temp) for x in light]
-    humidity = [convert(x, temp_to_humidity) for x in temp]
-    location = [convert(x, humidity_to_location) for x in humidity]
+# def part2(inp:str) -> int:
+#     seeds = parse_seeds2(inp)
+#     seed_to_soil = parse_mapping(inp, pattern=r"seed-to-soil map:\n([\S\s]*?)soil")
+#     soil_to_fertilizer = parse_mapping(inp, pattern=r"soil-to-fertilizer map:\n([\S\s]*?)fertilizer")
+#     print(soil_to_fertilizer)
+#     fertilizer_to_water = parse_mapping(inp, pattern=r"fertilizer-to-water map:\n([\S\s]*?)water")
+#     water_to_light = parse_mapping(inp, pattern=r"water-to-light map:\n([\S\s]*?)light")
+#     light_to_temp = parse_mapping(inp, pattern=r"light-to-temperature map:\n([\S\s]*?)temperature")
+#     temp_to_humidity = parse_mapping(inp, pattern=r"temperature-to-humidity map:\n([\S\s]*?)humidity")
+#     humidity_to_location = parse_mapping(inp, pattern=r"humidity-to-location map:\n([\S\s]*?)")
 
+#     soil = convert2(seeds, seed_to_soil)
+#     fertilizer = convert2(soil, soil_to_fertilizer)
+#     print(fertilizer)
+    # water = convert2(fertilizer, fertilizer_to_water)
+    # light = convert2(water, water_to_light)
+    # temp = convert2(light, light_to_temp)
+    # humidity = convert2(temp, temp_to_humidity)
+    # location = convert2(humidity, humidity_to_location)
 
-parse_seeds2(example)
-convert2(parse_seeds2(example), [Mapping(dest=50, source=98, length=2), Mapping(dest=52, source=50, length=48)])
+    # return min([start for start,stop in location])
+
 ```
 
 4 5 6
