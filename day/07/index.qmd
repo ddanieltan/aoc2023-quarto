@@ -47,7 +47,6 @@ Now, you can determine the total winnings of this set of hands by adding up the 
 from collections import Counter
 import polars as pl
 
-
 def calc_set(hand:str) -> int:
     """
     Five of a kind -> 6
@@ -78,8 +77,9 @@ def calc_set(hand:str) -> int:
                 return 2
             else:
                 return 1
-        case 0:
-            return 0
+        
+    # Hand has no set
+    return 0
 
 def calc_label(label:str) -> int:
     LABELS = "23456789TJQKA"
@@ -130,6 +130,104 @@ with open("./input.txt") as f:
     inp = f.read()
 
 part1(inp)
+```
+
+## Part 2
+To make things a little more interesting, the Elf introduces one additional rule. Now, J cards are jokers - wildcards that can act like whatever card would make the hand the strongest type possible.
+
+To balance this, J cards are now the weakest individual cards, weaker even than 2. The other cards stay in the same order: A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J.
+
+J cards can pretend to be whatever card is best for the purpose of determining hand type; for example, QJJQ2 is now considered four of a kind. However, for the purpose of breaking ties between two hands of the same type, J is always treated as J, not the card it's pretending to be: JKKK2 is weaker than QQQQ2 because J is weaker than Q.
+
+Now, the above example goes very differently:
+```
+32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483
+```
+
+32T3K is still the only one pair; it doesn't contain any jokers, so its strength doesn't increase.
+KK677 is now the only two pair, making it the second-weakest hand.
+T55J5, KTJJT, and QQQJA are now all four of a kind! T55J5 gets rank 3, QQQJA gets rank 4, and KTJJT gets rank 5.
+With the new joker rule, the total winnings in this example are 5905.
+
+Using the new joker rule, find the rank of every hand in your set. **What are the new total winnings?**
+```{python}
+
+def calc_set2(hand:str) -> int:
+    """
+    Five of a kind -> 6
+    Four of a kind -> 5
+    Full house -> 4
+    Three of a kind -> 3
+    Two pair -> 2
+    One pair -> 1
+    High card -> 0
+    """
+    # Edge case
+    if hand == "JJJJJ":
+        return 6
+    
+    joker_count = hand.count("J")
+    ctr = Counter(hand.replace("J",""))
+    (_, most_common_count) = ctr.most_common()[0]
+    
+    match (most_common_count + joker_count):
+        case 5:
+            return 6
+        case 4:
+            return 5
+        case 3:
+            (_ ,second_count) = ctr.most_common()[1]
+            if second_count == 2:
+                return 4
+            else:
+                return 3
+        case 2:
+            (_ ,second_count) = ctr.most_common()[1]
+            if second_count == 2:
+                return 2
+            else:
+                return 1
+        
+    # Hand has no set
+    return 0
+
+def calc_label2(label:str) -> int:
+    LABELS = "J23456789TQKA"
+    return LABELS.find(label)
+
+def score2(df:pl.DataFrame) -> pl.DataFrame:
+    return (df
+    .with_columns(set = pl.col("hands").map_elements(lambda x: calc_set2(x)))
+    .with_columns(a1 = pl.col("hands").str.slice(0,1).map_elements(lambda x: calc_label2(x)))
+    .with_columns(a2 = pl.col("hands").str.slice(1,1).map_elements(lambda x: calc_label2(x)))
+    .with_columns(a3 = pl.col("hands").str.slice(2,1).map_elements(lambda x: calc_label2(x)))
+    .with_columns(a4 = pl.col("hands").str.slice(3,1).map_elements(lambda x: calc_label2(x)))
+    .with_columns(a5 = pl.col("hands").str.slice(4,1).map_elements(lambda x: calc_label2(x)))
+    )
+
+def part2(inp:str) -> int:
+    df = parse(inp)
+    df = score2(df)
+    df = (df
+        .sort(pl.col("set"), pl.col("a1"), pl.col("a2"), pl.col("a3"), pl.col("a4"), pl.col("a5"), descending=False)
+        .with_row_count()
+        .with_columns(winnings = ((pl.col("row_nr")+1) * pl.col("bids")))
+    )
+
+    print(df.select(pl.sum("winnings")))
+    return df
+
+part2(example)
+```
+
+
+
+```{python}
+part2(inp)
 ```
 
 ## TIL
