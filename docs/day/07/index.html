@@ -142,6 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#part-1" id="toc-part-1" class="nav-link active" data-scroll-target="#part-1">Part 1</a></li>
+  <li><a href="#part-2" id="toc-part-2" class="nav-link" data-scroll-target="#part-2">Part 2</a></li>
   <li><a href="#til" id="toc-til" class="nav-link" data-scroll-target="#til">TIL</a>
   <ul class="collapse">
   <li><a href="#python-3.10-and-above-introduces-case-matching" id="toc-python-3.10-and-above-introduces-case-matching" class="nav-link" data-scroll-target="#python-3.10-and-above-introduces-case-matching">Python 3.10 and above introduces case matching</a></li>
@@ -202,39 +203,39 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calc_set(hand:<span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Five of a kind -&gt; 6</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Four of a kind -&gt; 5</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Full house -&gt; 4</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Three of a kind -&gt; 3</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Two pair -&gt; 2</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    One pair -&gt; 1</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    High card -&gt; 0</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    ctr <span class="op">=</span> Counter(hand)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    (_, most_common_count) <span class="op">=</span> ctr.most_common()[<span class="dv">0</span>]</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> most_common_count:</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">5</span>:</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">6</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">4</span>:</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">5</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span>:</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>            (_ ,second_count) <span class="op">=</span> ctr.most_common()[<span class="dv">1</span>]</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> second_count <span class="op">==</span> <span class="dv">2</span>:</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">4</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">3</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span>:</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            (_ ,second_count) <span class="op">=</span> ctr.most_common()[<span class="dv">1</span>]</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> second_count <span class="op">==</span> <span class="dv">2</span>:</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">2</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">1</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">0</span>:</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calc_set(hand:<span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Five of a kind -&gt; 6</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Four of a kind -&gt; 5</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Full house -&gt; 4</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Three of a kind -&gt; 3</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Two pair -&gt; 2</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    One pair -&gt; 1</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    High card -&gt; 0</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    ctr <span class="op">=</span> Counter(hand)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    (_, most_common_count) <span class="op">=</span> ctr.most_common()[<span class="dv">0</span>]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> most_common_count:</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">5</span>:</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">6</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">4</span>:</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">5</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span>:</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            (_ ,second_count) <span class="op">=</span> ctr.most_common()[<span class="dv">1</span>]</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> second_count <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">4</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">3</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span>:</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            (_ ,second_count) <span class="op">=</span> ctr.most_common()[<span class="dv">1</span>]</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> second_count <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">2</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Hand has no set</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span></span>
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calc_label(label:<span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    LABELS <span class="op">=</span> <span class="st">"23456789TJQKA"</span></span>
@@ -446,7 +447,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>0</td>
 <td>"23647"</td>
 <td>869</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>1</td>
 <td>4</td>
@@ -458,7 +459,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>1</td>
 <td>"23KTJ"</td>
 <td>69</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>1</td>
 <td>11</td>
@@ -470,7 +471,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>2</td>
 <td>"24JA6"</td>
 <td>808</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>2</td>
 <td>9</td>
@@ -482,7 +483,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>3</td>
 <td>"263TJ"</td>
 <td>731</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>4</td>
 <td>1</td>
@@ -494,7 +495,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>4</td>
 <td>"26J7K"</td>
 <td>114</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>4</td>
 <td>9</td>
@@ -506,7 +507,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>5</td>
 <td>"27469"</td>
 <td>851</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>5</td>
 <td>2</td>
@@ -518,7 +519,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>6</td>
 <td>"2835K"</td>
 <td>20</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>6</td>
 <td>1</td>
@@ -530,7 +531,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>7</td>
 <td>"29TA7"</td>
 <td>750</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>7</td>
 <td>8</td>
@@ -542,7 +543,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>8</td>
 <td>"2T6J4"</td>
 <td>194</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>8</td>
 <td>4</td>
@@ -554,7 +555,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>9</td>
 <td>"2J96Q"</td>
 <td>216</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>9</td>
 <td>7</td>
@@ -566,7 +567,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>10</td>
 <td>"2J9QA"</td>
 <td>344</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>9</td>
 <td>7</td>
@@ -578,7 +579,7 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 <td>11</td>
 <td>"2A49Q"</td>
 <td>658</td>
-<td>null</td>
+<td>0</td>
 <td>0</td>
 <td>12</td>
 <td>2</td>
@@ -748,17 +749,564 @@ T55J5 and QQQJA are both three of a kind. QQQJA has a stronger first card, so it
 </div>
 </div>
 </section>
+<section id="part-2" class="level2">
+<h2 class="anchored" data-anchor-id="part-2">Part 2</h2>
+<p>To make things a little more interesting, the Elf introduces one additional rule. Now, J cards are jokers - wildcards that can act like whatever card would make the hand the strongest type possible.</p>
+<p>To balance this, J cards are now the weakest individual cards, weaker even than 2. The other cards stay in the same order: A, K, Q, T, 9, 8, 7, 6, 5, 4, 3, 2, J.</p>
+<p>J cards can pretend to be whatever card is best for the purpose of determining hand type; for example, QJJQ2 is now considered four of a kind. However, for the purpose of breaking ties between two hands of the same type, J is always treated as J, not the card it’s pretending to be: JKKK2 is weaker than QQQQ2 because J is weaker than Q.</p>
+<p>Now, the above example goes very differently:</p>
+<pre><code>32T3K 765
+T55J5 684
+KK677 28
+KTJJT 220
+QQQJA 483</code></pre>
+<p>32T3K is still the only one pair; it doesn’t contain any jokers, so its strength doesn’t increase. KK677 is now the only two pair, making it the second-weakest hand. T55J5, KTJJT, and QQQJA are now all four of a kind! T55J5 gets rank 3, QQQJA gets rank 4, and KTJJT gets rank 5. With the new joker rule, the total winnings in this example are 5905.</p>
+<p>Using the new joker rule, find the rank of every hand in your set. <strong>What are the new total winnings?</strong></p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calc_set2(hand:<span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Five of a kind -&gt; 6</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Four of a kind -&gt; 5</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Full house -&gt; 4</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Three of a kind -&gt; 3</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Two pair -&gt; 2</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">    One pair -&gt; 1</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">    High card -&gt; 0</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Edge case</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> hand <span class="op">==</span> <span class="st">"JJJJJ"</span>:</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">6</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    joker_count <span class="op">=</span> hand.count(<span class="st">"J"</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    ctr <span class="op">=</span> Counter(hand.replace(<span class="st">"J"</span>,<span class="st">""</span>))</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    (_, most_common_count) <span class="op">=</span> ctr.most_common()[<span class="dv">0</span>]</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    match (most_common_count <span class="op">+</span> joker_count):</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">5</span>:</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">6</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">4</span>:</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dv">5</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">3</span>:</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            (_ ,second_count) <span class="op">=</span> ctr.most_common()[<span class="dv">1</span>]</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> second_count <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">4</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">3</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">case</span> <span class="dv">2</span>:</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            (_ ,second_count) <span class="op">=</span> ctr.most_common()[<span class="dv">1</span>]</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> second_count <span class="op">==</span> <span class="dv">2</span>:</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">2</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Hand has no set</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calc_label2(label:<span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    LABELS <span class="op">=</span> <span class="st">"J23456789TQKA"</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> LABELS.find(label)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> score2(df:pl.DataFrame) <span class="op">-&gt;</span> pl.DataFrame:</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (df</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    .with_columns(<span class="bu">set</span> <span class="op">=</span> pl.col(<span class="st">"hands"</span>).map_elements(<span class="kw">lambda</span> x: calc_set2(x)))</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    .with_columns(a1 <span class="op">=</span> pl.col(<span class="st">"hands"</span>).<span class="bu">str</span>.<span class="bu">slice</span>(<span class="dv">0</span>,<span class="dv">1</span>).map_elements(<span class="kw">lambda</span> x: calc_label2(x)))</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    .with_columns(a2 <span class="op">=</span> pl.col(<span class="st">"hands"</span>).<span class="bu">str</span>.<span class="bu">slice</span>(<span class="dv">1</span>,<span class="dv">1</span>).map_elements(<span class="kw">lambda</span> x: calc_label2(x)))</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    .with_columns(a3 <span class="op">=</span> pl.col(<span class="st">"hands"</span>).<span class="bu">str</span>.<span class="bu">slice</span>(<span class="dv">2</span>,<span class="dv">1</span>).map_elements(<span class="kw">lambda</span> x: calc_label2(x)))</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    .with_columns(a4 <span class="op">=</span> pl.col(<span class="st">"hands"</span>).<span class="bu">str</span>.<span class="bu">slice</span>(<span class="dv">3</span>,<span class="dv">1</span>).map_elements(<span class="kw">lambda</span> x: calc_label2(x)))</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    .with_columns(a5 <span class="op">=</span> pl.col(<span class="st">"hands"</span>).<span class="bu">str</span>.<span class="bu">slice</span>(<span class="dv">4</span>,<span class="dv">1</span>).map_elements(<span class="kw">lambda</span> x: calc_label2(x)))</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> part2(inp:<span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> parse(inp)</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> score2(df)</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> (df</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>        .sort(pl.col(<span class="st">"set"</span>), pl.col(<span class="st">"a1"</span>), pl.col(<span class="st">"a2"</span>), pl.col(<span class="st">"a3"</span>), pl.col(<span class="st">"a4"</span>), pl.col(<span class="st">"a5"</span>), descending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>        .with_row_count()</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>        .with_columns(winnings <span class="op">=</span> ((pl.col(<span class="st">"row_nr"</span>)<span class="op">+</span><span class="dv">1</span>) <span class="op">*</span> pl.col(<span class="st">"bids"</span>)))</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(df.select(pl.<span class="bu">sum</span>(<span class="st">"winnings"</span>)))</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>part2(example)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>shape: (1, 1)
+┌──────────┐
+│ winnings │
+│ ---      │
+│ i64      │
+╞══════════╡
+│ 5905     │
+└──────────┘</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 10)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">row_nr</th>
+<th data-quarto-table-cell-role="th">hands</th>
+<th data-quarto-table-cell-role="th">bids</th>
+<th data-quarto-table-cell-role="th">set</th>
+<th data-quarto-table-cell-role="th">a1</th>
+<th data-quarto-table-cell-role="th">a2</th>
+<th data-quarto-table-cell-role="th">a3</th>
+<th data-quarto-table-cell-role="th">a4</th>
+<th data-quarto-table-cell-role="th">a5</th>
+<th data-quarto-table-cell-role="th">winnings</th>
+</tr>
+<tr class="odd">
+<th>u32</th>
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>"32T3K"</td>
+<td>765</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>9</td>
+<td>2</td>
+<td>11</td>
+<td>765</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>"KK677"</td>
+<td>28</td>
+<td>2</td>
+<td>11</td>
+<td>11</td>
+<td>5</td>
+<td>6</td>
+<td>6</td>
+<td>56</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>"T55J5"</td>
+<td>684</td>
+<td>5</td>
+<td>9</td>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td>4</td>
+<td>2052</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>"QQQJA"</td>
+<td>483</td>
+<td>5</td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td>0</td>
+<td>12</td>
+<td>1932</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>"KTJJT"</td>
+<td>220</td>
+<td>5</td>
+<td>11</td>
+<td>9</td>
+<td>0</td>
+<td>0</td>
+<td>9</td>
+<td>1100</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>part2(inp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>shape: (1, 1)
+┌───────────┐
+│ winnings  │
+│ ---       │
+│ i64       │
+╞═══════════╡
+│ 247885995 │
+└───────────┘</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (1_000, 10)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">row_nr</th>
+<th data-quarto-table-cell-role="th">hands</th>
+<th data-quarto-table-cell-role="th">bids</th>
+<th data-quarto-table-cell-role="th">set</th>
+<th data-quarto-table-cell-role="th">a1</th>
+<th data-quarto-table-cell-role="th">a2</th>
+<th data-quarto-table-cell-role="th">a3</th>
+<th data-quarto-table-cell-role="th">a4</th>
+<th data-quarto-table-cell-role="th">a5</th>
+<th data-quarto-table-cell-role="th">winnings</th>
+</tr>
+<tr class="odd">
+<th>u32</th>
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>"23647"</td>
+<td>869</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>5</td>
+<td>3</td>
+<td>6</td>
+<td>869</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>"27469"</td>
+<td>851</td>
+<td>0</td>
+<td>1</td>
+<td>6</td>
+<td>3</td>
+<td>5</td>
+<td>8</td>
+<td>1702</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>"2835K"</td>
+<td>20</td>
+<td>0</td>
+<td>1</td>
+<td>7</td>
+<td>2</td>
+<td>4</td>
+<td>11</td>
+<td>60</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>"29TA7"</td>
+<td>750</td>
+<td>0</td>
+<td>1</td>
+<td>8</td>
+<td>9</td>
+<td>12</td>
+<td>6</td>
+<td>3000</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>"2A49Q"</td>
+<td>658</td>
+<td>0</td>
+<td>1</td>
+<td>12</td>
+<td>3</td>
+<td>8</td>
+<td>10</td>
+<td>3290</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>"32794"</td>
+<td>673</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td>6</td>
+<td>8</td>
+<td>3</td>
+<td>4038</td>
+</tr>
+<tr class="odd">
+<td>6</td>
+<td>"32TK9"</td>
+<td>536</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td>9</td>
+<td>11</td>
+<td>8</td>
+<td>3752</td>
+</tr>
+<tr class="even">
+<td>7</td>
+<td>"32K59"</td>
+<td>470</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td>11</td>
+<td>4</td>
+<td>8</td>
+<td>3760</td>
+</tr>
+<tr class="odd">
+<td>8</td>
+<td>"349T7"</td>
+<td>677</td>
+<td>0</td>
+<td>2</td>
+<td>3</td>
+<td>8</td>
+<td>9</td>
+<td>6</td>
+<td>6093</td>
+</tr>
+<tr class="even">
+<td>9</td>
+<td>"359AK"</td>
+<td>615</td>
+<td>0</td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+<td>12</td>
+<td>11</td>
+<td>6150</td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td>"362QA"</td>
+<td>907</td>
+<td>0</td>
+<td>2</td>
+<td>5</td>
+<td>1</td>
+<td>10</td>
+<td>12</td>
+<td>9977</td>
+</tr>
+<tr class="even">
+<td>11</td>
+<td>"378K4"</td>
+<td>537</td>
+<td>0</td>
+<td>2</td>
+<td>6</td>
+<td>7</td>
+<td>11</td>
+<td>3</td>
+<td>6444</td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr class="even">
+<td>988</td>
+<td>"5555J"</td>
+<td>146</td>
+<td>6</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td>144394</td>
+</tr>
+<tr class="odd">
+<td>989</td>
+<td>"7J7J7"</td>
+<td>34</td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+<td>33660</td>
+</tr>
+<tr class="even">
+<td>990</td>
+<td>"77J77"</td>
+<td>800</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+<td>6</td>
+<td>792800</td>
+</tr>
+<tr class="odd">
+<td>991</td>
+<td>"8JJJJ"</td>
+<td>769</td>
+<td>6</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>762848</td>
+</tr>
+<tr class="even">
+<td>992</td>
+<td>"88JJJ"</td>
+<td>370</td>
+<td>6</td>
+<td>7</td>
+<td>7</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>367410</td>
+</tr>
+<tr class="odd">
+<td>993</td>
+<td>"9999J"</td>
+<td>281</td>
+<td>6</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>0</td>
+<td>279314</td>
+</tr>
+<tr class="even">
+<td>994</td>
+<td>"TJTJT"</td>
+<td>445</td>
+<td>6</td>
+<td>9</td>
+<td>0</td>
+<td>9</td>
+<td>0</td>
+<td>9</td>
+<td>442775</td>
+</tr>
+<tr class="odd">
+<td>995</td>
+<td>"TJTTT"</td>
+<td>472</td>
+<td>6</td>
+<td>9</td>
+<td>0</td>
+<td>9</td>
+<td>9</td>
+<td>9</td>
+<td>470112</td>
+</tr>
+<tr class="even">
+<td>996</td>
+<td>"QJJQQ"</td>
+<td>386</td>
+<td>6</td>
+<td>10</td>
+<td>0</td>
+<td>0</td>
+<td>10</td>
+<td>10</td>
+<td>384842</td>
+</tr>
+<tr class="odd">
+<td>997</td>
+<td>"QQJQQ"</td>
+<td>821</td>
+<td>6</td>
+<td>10</td>
+<td>10</td>
+<td>0</td>
+<td>10</td>
+<td>10</td>
+<td>819358</td>
+</tr>
+<tr class="even">
+<td>998</td>
+<td>"KJJKK"</td>
+<td>617</td>
+<td>6</td>
+<td>11</td>
+<td>0</td>
+<td>0</td>
+<td>11</td>
+<td>11</td>
+<td>616383</td>
+</tr>
+<tr class="odd">
+<td>999</td>
+<td>"KKKJK"</td>
+<td>565</td>
+<td>6</td>
+<td>11</td>
+<td>11</td>
+<td>11</td>
+<td>0</td>
+<td>11</td>
+<td>565000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
 <section id="til" class="level2">
 <h2 class="anchored" data-anchor-id="til">TIL</h2>
 <section id="python-3.10-and-above-introduces-case-matching" class="level3">
 <h3 class="anchored" data-anchor-id="python-3.10-and-above-introduces-case-matching">Python 3.10 and above introduces case matching</h3>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hand <span class="op">=</span> <span class="st">"abc"</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">match</span> hand:</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">"abd"</span>:</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"no"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">"abc"</span>:</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"yes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hand <span class="op">=</span> <span class="st">"abc"</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">match</span> hand:</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">"abd"</span>:</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"no"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">"abc"</span>:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"yes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>yes</code></pre>
 </div>
